@@ -1,8 +1,13 @@
 import telebot
 import random
+from flask import Flask, request
 
-# Замените 'YOUR_BOT_TOKEN' на токен вашего бота
-bot = telebot.TeleBot("8004173733:AAFqTNogPXoYiEv50lopxwklHDxjFM8vdrw")
+# Токен бота
+TOKEN = "8004173733:AAFqTNogPXoYiEv50lopxwklHDxjFM8vdrw"
+bot = telebot.TeleBot(TOKEN)
+
+# Flask приложение
+app = Flask(__name__)
 
 # Логирование сообщений
 def log_message(message):
@@ -12,7 +17,7 @@ def log_message(message):
 # Обработка всех сообщений
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
-    log_message(message)  # Логируем сообщение
+    log_message(message)
 
     # Условия для ответов
     if message.text.lower() == 'дед':
@@ -32,5 +37,14 @@ def handle_message(message):
     if random.randint(1, 20) == 1:  # 5% шанс для любого сообщения
         bot.reply_to(message, 'Ну и хуйню ты несёшь')
 
-# Запуск бота
-bot.polling()
+# Вебхук
+@app.route(f'/{TOKEN}', methods=['POST'])
+def webhook():
+    json_str = request.get_data().decode('UTF-8')
+    update = telebot.types.Update.de_json(json_str)
+    bot.process_new_updates([update])
+    return 'ok', 200
+
+# Точка входа
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
