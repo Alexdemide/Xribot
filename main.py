@@ -2,7 +2,7 @@ import telebot
 import random
 
 # Замените 'YOUR_BOT_TOKEN' на токен вашего бота
-bot = telebot.TeleBot(8004173733:AAFqTNogPXoYiEv50lopxwklHDxjFM8vdrw)
+bot = telebot.TeleBot("8004173733:AAFqTNogPXoYiEv50lopxwklHDxjFM8vdrw")
 
 # Логирование сообщений
 def log_message(message):
