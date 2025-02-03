@@ -1,5 +1,6 @@
 import telebot
 import random
+import os
 from flask import Flask, request
 
 # Токен бота
@@ -19,23 +20,28 @@ def log_message(message):
 def handle_message(message):
     log_message(message)
 
-    # Условия для ответов
     if message.text.lower() == 'дед':
         bot.reply_to(message, 'Нахуй одет')
         return
 
     if message.from_user.username in ['tonynow300689', 'FenevAPP']:
-        if random.randint(1, 10) == 1:  # 10% шанс
+        if random.randint(1, 10) == 1:
             bot.reply_to(message, 'Шутник хуев')
             return
 
     if message.from_user.username == 'boian29':
-        if random.randint(1, 20) == 1:  # 5% шанс
+        if random.randint(1, 20) == 1:
             bot.reply_to(message, 'Ну ты и хуйло')
             return
 
-    if random.randint(1, 20) == 1:  # 5% шанс для любого сообщения
+    if random.randint(1, 20) == 1:
         bot.reply_to(message, 'Ну и хуйню ты несёшь')
+
+# Установка вебхука
+@app.before_first_request
+def setup_webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://<ВАШ-ДОМЕН-RENDER>.onrender.com/' + TOKEN)
 
 # Вебхук
 @app.route(f'/{TOKEN}', methods=['POST'])
@@ -47,4 +53,5 @@ def webhook():
 
 # Точка входа
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    PORT = int(os.environ.get('PORT', 5000))
+    app.run(host="0.0.0.0", port=PORT)
