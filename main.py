@@ -37,12 +37,6 @@ def handle_message(message):
     if random.randint(1, 20) == 1:
         bot.reply_to(message, 'Ну и хуйню ты несёшь')
 
-# Установка вебхука
-@app.before_first_request
-def setup_webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url='https://<ВАШ-ДОМЕН-RENDER>.onrender.com/' + TOKEN)
-
 # Вебхук
 @app.route(f'/{TOKEN}', methods=['POST'])
 def webhook():
@@ -51,7 +45,13 @@ def webhook():
     bot.process_new_updates([update])
     return 'ok', 200
 
+# Установка вебхука после создания приложения
+def setup_webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://<ВАШ-ДОМЕН-RENDER>.onrender.com/' + TOKEN)
+
 # Точка входа
 if __name__ == "__main__":
+    setup_webhook()  # Устанавливаем вебхук здесь
     PORT = int(os.environ.get('PORT', 5000))
     app.run(host="0.0.0.0", port=PORT)
