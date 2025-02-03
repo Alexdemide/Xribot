@@ -1,0 +1,53 @@
+import logging
+import random
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+
+# Вставьте сюда свой токен
+TOKEN =8004173733:AAFqTNogPXoYiEv50lopxwklHDxjFM8vdrw
+
+# Логирование
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO,
+    filename='bot.log'  # Лог сохраняется в этот файл
+)
+
+# Список пользователей
+ANTONS = ['@tonynow300689', '@FenevAPP']
+BOIAN = '@boian29'
+
+# Обработка сообщений
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    message = update.message
+    text = message.text
+    user = message.from_user.username
+
+    logging.info(f"Сообщение от @{user}: {text}")
+
+    # Проверка на слово "дед" (только отдельное слово, без учёта регистра)
+    if any(word.lower() == 'дед' for word in text.split()):
+        await message.reply_text("Нахуй одет")
+        return
+
+    # Рандомные ответы
+    if random.random() < 0.05:
+        await message.reply_text("Ну и хуйню ты несёшь")
+        return
+
+    if user in ANTONS and random.random() < 0.10:
+        await message.reply_text("Шутник хуев")
+        return
+
+    if user == BOIAN and random.random() < 0.05:
+        await message.reply_text("Ну ты и хуйло")
+        return
+
+# Основной код
+def main() -> None:
+    app = ApplicationBuilder().token(TOKEN).build()
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    app.run_polling()
+
+if __name__ == '__main__':
+    main()
